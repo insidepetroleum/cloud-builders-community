@@ -19,7 +19,7 @@ func Trigger(ctx context.Context, build string, webhook string, msg string) {
 					fmt.Sprintf("--build=%s", build),
 					fmt.Sprintf("--webhook=%s", webhook),
 					"--mode=monitor",
-					fmt.Sprintf("--msg=%s", msg)
+					fmt.Sprintf("--msg=%s", msg),
 				},
 			},
 		},
