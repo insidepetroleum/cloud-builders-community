@@ -9,7 +9,7 @@ import (
 )
 
 // Trigger starts an independent watcher build.
-func Trigger(ctx context.Context, build string, webhook string) {
+func Trigger(ctx context.Context, build string, webhook string, msg string) {
 	svc := gcbClient(ctx)
 	b := &cloudbuild.Build{
 		Steps: []*cloudbuild.BuildStep{
@@ -19,6 +19,7 @@ func Trigger(ctx context.Context, build string, webhook string) {
 					fmt.Sprintf("--build=%s", build),
 					fmt.Sprintf("--webhook=%s", webhook),
 					"--mode=monitor",
+					fmt.Sprintf("--msg=%s", msg)
 				},
 			},
 		},
