@@ -34,10 +34,10 @@ func Notify(b *cloudbuild.Build, webhook string, name string, commitUrl string) 
 				{
 					"type": "section",
 					"text": {
-						"type": "plain_text"
-						"text": "%s Cloud Build %s completed: %s %s in %s",
+						"type": "plain_text",
+						"text": "%s Cloud Build %s completed: %s %s in %s"
 					}
-				}
+				},
 				{
 					"type": "actions",
 					"elements": [
