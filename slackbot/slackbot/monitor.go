@@ -9,7 +9,7 @@ import (
 const maxErrors = 3
 
 // Monitor polls Cloud Build until the build reaches completed status, then triggers the Slack event.
-func Monitor(ctx context.Context, build string, webhook string, msg string) {
+func Monitor(ctx context.Context, build string, webhook string, name string, commitUrl string) {
 	svc := gcbClient(ctx)
 	errors := 0
 	project, err := getProject()
@@ -34,7 +34,7 @@ func Monitor(ctx context.Context, build string, webhook string, msg string) {
 		switch b.Status {
 		case "SUCCESS", "FAILURE", "INTERNAL_ERROR", "TIMEOUT", "CANCELLED":
 			log.Printf("Terminal status reached.  Notifying")
-			Notify(b, webhook, msg)
+			Notify(b, webhook, name, commitUrl)
 			return
 		}
 		<-t

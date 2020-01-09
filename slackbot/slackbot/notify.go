@@ -6,13 +6,17 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	cloudbuild "google.golang.org/api/cloudbuild/v1"
 )
 
 // Notify posts a notification to Slack that the build is complete.
-func Notify(b *cloudbuild.Build, webhook string, msg string) {
-	url := fmt.Sprintf("https://console.cloud.google.com/cloud-build/builds/%s", b.Id)
+func Notify(b *cloudbuild.Build, webhook string, name string, commitUrl string) {
+	buildUrl := fmt.Sprintf("https://console.cloud.google.com/cloud-build/builds/%s", b.Id)
+	startTime, _ := time.Parse(time.RFC3339, b.StartTime)
+	finishTime, _ := time.Parse(time.RFC3339, b.FinishTime)
+	duration := finishTime.Sub(startTime)
 	var i string
 	switch b.Status {
 	case "SUCCESS":
@@ -25,19 +29,38 @@ func Notify(b *cloudbuild.Build, webhook string, msg string) {
 		i = ":question:"
 	}
 	j := fmt.Sprintf(
-		`{"text": "%s Cloud Build %s complete: %s %s",
-		    "attachments": [
+		`{
+		    "blocks": [
 				{
-					"fallback": "Open build details at %s",
-					"actions": [
+					"type": "section",
+					"text": {
+						"type": "plain_text"
+						"text": "%s Cloud Build %s completed: %s %s in %s",
+					}
+				}
+				{
+					"type": "actions",
+					"elements": [
 						{
 							"type": "button",
-							"text": "Open details",
+							"text": {
+								"type": "plain_text",
+								"text": "Open build details"
+							},
+							"url": "%s"
+						},
+						{
+							"type": "button",
+							"text": {
+								"type": "plain_text",
+								"text": "Open commit details"
+							},
 							"url": "%s"
 						}
 					]
 				}
-			]}`, msg, b.Id, i, b.Status, url, url)
+			]
+		}`, name, b.Id, i, b.Status, duration, buildUrl, commitUrl)
 
 	r := strings.NewReader(j)
 	resp, err := http.Post(webhook, "application/json", r)
