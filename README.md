@@ -5,6 +5,9 @@ This repository contains source code for community-contributed Docker images. Yo
 
 These are not official Google products.
 
+## INPT
+We are using a modified version of the slackbot image. See slackbot readme on how to use
+
 ## How to use a community-contributed build step
 
 Google Cloud Build executes a build as a series of build steps. Each build step is run in a Docker container. See
